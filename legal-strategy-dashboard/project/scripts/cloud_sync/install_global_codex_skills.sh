@@ -83,9 +83,10 @@ fi
 
 python3 - <<PY
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 report = {
-    "timestamp_utc": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+    "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     "source_adobe_skill": "${SOURCE_ADOBE_SKILL}",
     "global_skills_root": "${GLOBAL_SKILLS_ROOT}",
     "installed_skills": {

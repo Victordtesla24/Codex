@@ -167,6 +167,7 @@ EOF
 
 python3 - <<PY
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 output_root = Path("${OUTPUT_ROOT}")
@@ -183,7 +184,7 @@ required_files = [
 status = "PASS" if all(p.exists() for p in required_files) else "FAIL"
 
 report = {
-    "timestamp_utc": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+    "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     "output_root": str(output_root),
     "files_generated": files_generated,
     "source_inputs": {

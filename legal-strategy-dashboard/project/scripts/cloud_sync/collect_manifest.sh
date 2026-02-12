@@ -131,9 +131,10 @@ collect_manifest "${CANVA_SKILL_ROOT}" "${CANVA_MANIFEST}" "skill"
 
 python3 - <<PY
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 summary = {
-    "timestamp_utc": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+    "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     "days_back": int("${DAYS_BACK}"),
     "exclude_policy": "${EXCLUDE_POLICY}",
     "manifests": {

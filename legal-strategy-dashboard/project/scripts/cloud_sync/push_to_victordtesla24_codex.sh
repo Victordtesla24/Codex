@@ -149,12 +149,13 @@ popd >/dev/null
 
 python3 - <<PY
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 changed = [line.strip() for line in """${changed_file_list}""".splitlines() if line.strip()]
 selected_total = int("${selected_total}")
 changed_files = int("${changed_files}")
 report = {
-    "timestamp_utc": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+    "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     "repo_url": "${REPO_URL}",
     "branch": "${BRANCH}",
     "layout_root": "${LAYOUT_ROOT}",

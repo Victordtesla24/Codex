@@ -1,0 +1,54 @@
+{
+  "timestamp_utc": "2026-02-12T04:55:36.771866Z",
+  "starter_kit": "/Users/vics-macbook-pro/.codex/skills/.system/skill-creator/canva-apps-sdk-starter-kit",
+  "app_source": "/Users/vics-macbook-pro/.codex/skills/canva-csuite-pdf-skill/assets/canva_app",
+  "output_dir": "/Users/vics-macbook-pro/.codex/skills/canva-csuite-pdf-skill/assets/portal_upload",
+  "steps": {
+    "env_validation": {
+      "status": "ok",
+      "env_file": "/Users/vics-macbook-pro/.codex/skills/.system/skill-creator/canva-apps-sdk-starter-kit/.env",
+      "missing_keys": [],
+      "warnings": [],
+      "errors": [],
+      "values": {
+        "CANVA_FRONTEND_PORT": "8080",
+        "CANVA_BACKEND_PORT": "3001",
+        "CANVA_BACKEND_HOST": "http://localhost:3001",
+        "CANVA_APP_ID": "AAHAAJ2LL3A",
+        "CANVA_APP_ORIGIN": "https://app-aahaaj2ll3a.canva-apps.com",
+        "CANVA_HMR_ENABLED": "TRUE"
+      }
+    },
+    "overlay": {
+      "status": "ok",
+      "files_overlaid": 5
+    },
+    "npm_install": {
+      "status": "skipped",
+      "reason": "node_modules present"
+    },
+    "npm_build": {
+      "status": "ok",
+      "returncode": 0,
+      "stdout": "\n> build\n> webpack --config webpack.config.ts --mode production && npm run extract\n\n[dotenv@16.6.0] injecting env (6) from .env\nasset app.js 902 KiB [emitted] [minimized] [big] (name: app) (id hint: vendors) 1 related asset\norphan modules 3.1 MiB [orphan] 1206 modules\nruntime modules 2.69 KiB 8 modules\ncacheable modules 2.1 MiB\n  modules by path ./node_modules/ 964 KiB 52 modules\n  asset modules 5.64 KiB\n    modules by mime type image/png 4.94 KiB\n      data:image/png;base64,iVBORw0KGgoAAAAN.. 4.67 KiB [built] [code generated]\n      data:image/png;base64,iVBORw0KGgoAAAAN.. 275 bytes [built] [code generated]\n    modules by mime type image/svg+xml 713 bytes\n      data:image/svg+xml;base64,PHN2ZyB4bWxucz0i.. 344 bytes [built] [code generated]\n      data:image/svg+xml;base64,PHN2ZyB4bWxucz0i.. 368 bytes [built] [code generated]\n  ./src/index.tsx + 261 modules 1.15 MiB [built] [code generated]\n  ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].use[2]!./styles/components.css 1.35 KiB [built] [code generated]\n\nWARNING in asset size limit: The following asset(s) exceed the recommended size limit (244 KiB).\nThis can impact web performance.\nAssets: \n  app.js (902 KiB)\n\nWARNING in entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.\nEntrypoints:\n  app (902 KiB)\n      app.js\n\nWARNING in webpack performance recommendations: \nYou can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.\nFor more info visit https://webpack.js.org/guides/code-splitting/\n\nwebpack 5.99.9 compiled with 3 warnings in 28192 ms\n\n> extract\n> formatjs extract \"src/**/*.{ts,tsx}\" --out-file dist/messages_en.json\n\n",
+      "stderr": "BACKEND_HOST should not be set to localhost for production builds! Refer to \"Customizing the backend host\" in the README.md for more information.\n"
+    },
+    "collect_artifacts": {
+      "status": "ok",
+      "artifacts": [
+        "/Users/vics-macbook-pro/.codex/skills/canva-csuite-pdf-skill/assets/portal_upload/app.js",
+        "/Users/vics-macbook-pro/.codex/skills/canva-csuite-pdf-skill/assets/portal_upload/messages_en.json",
+        "/Users/vics-macbook-pro/.codex/skills/canva-csuite-pdf-skill/assets/portal_upload/canva-app.json",
+        "/Users/vics-macbook-pro/.codex/skills/canva-csuite-pdf-skill/assets/portal_upload/config.json"
+      ]
+    },
+    "recommended_env": {
+      "status": "ok",
+      "path": "/Users/vics-macbook-pro/.codex/skills/canva-csuite-pdf-skill/assets/portal_upload/starter_kit_env_recommended.env"
+    }
+  },
+  "runtime": {
+    "node": "v20.20.0",
+    "npm": "10.8.2"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "run_date": "2026-02-10",
+  "status": "success",
+  "generated_at_utc": "2026-02-11T15:52:17Z",
+  "steps": [
+    {
+      "step": "ingest_codex_sessions",
+      "output": "/Users/Shared/codex/legal-strategy-dashboard/learning/raw/codex_sessions/2026-02-10.jsonl"
+    },
+    {
+      "step": "ingest_dashboard_events",
+      "output": "/Users/Shared/codex/legal-strategy-dashboard/learning/raw/dashboard/2026-02-10.jsonl"
+    },
+    {
+      "step": "normalize_events",
+      "output": "/Users/Shared/codex/legal-strategy-dashboard/learning/normalized/2026-02-10/events.jsonl"
+    },
+    {
+      "step": "compute_metrics",
+      "output": "/Users/Shared/codex/legal-strategy-dashboard/learning/analysis/2026-02-10/metrics.json"
+    },
+    {
+      "step": "generate_interaction_insights",
+      "output": "/Users/Shared/codex/legal-strategy-dashboard/learning/analysis/2026-02-10/interactions.json",
+      "mode": "hybrid"
+    },
+    {
+      "step": "synthesize_rules",
+      "output": "/Users/Shared/codex/legal-strategy-dashboard/learning/rules/rules_registry.json"
+    },
+    {
+      "step": "activate_rules",
+      "registry": "/Users/Shared/codex/legal-strategy-dashboard/learning/rules/rules_registry.json",
+      "active": "/Users/Shared/codex/legal-strategy-dashboard/learning/rules/active_rules.json"
+    },
+    {
+      "step": "publish_runtime_rules",
+      "output": "/Users/Shared/codex/legal-strategy-dashboard/learning/rules/active_rules.json"
+    },
+    {
+      "step": "sync_skill_metadata",
+      "validation_exit_code": 0,
+      "validation_output": "Skill is valid!"
+    },
+    {
+      "step": "generate_daily_report",
+      "markdown": "/Users/Shared/codex/legal-strategy-dashboard/learning/reports/daily/Learning_Outcomes_2026-02-10.md",
+      "json": "/Users/Shared/codex/legal-strategy-dashboard/learning/reports/daily/Learning_Outcomes_2026-02-10.json"
+    }
+  ],
+  "error": null
+}

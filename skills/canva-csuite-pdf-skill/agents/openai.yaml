@@ -1,0 +1,5 @@
+---
+interface:
+  display_name: "Canva C-Suite PDF Skill"
+  short_description: "Generate executive PDFs in Canva"
+  default_prompt: "Use $canva-csuite-pdf-skill to produce a C-suite executive PDF with mandatory local template enforcement and strict legal preflight checks."

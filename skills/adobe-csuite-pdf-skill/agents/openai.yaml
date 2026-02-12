@@ -1,0 +1,5 @@
+---
+interface:
+  display_name: "Adobe C-Suite PDF Skill"
+  short_description: "Canva-first executive legal PDF rendering"
+  default_prompt: "Use $adobe-csuite-pdf-skill with Canva-first rendering and Adobe fallback to generate a C-suite legal brief PDF with strict legal preflight checks."

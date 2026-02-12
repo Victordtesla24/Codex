@@ -1,0 +1,38 @@
+{
+  "title": {
+    "left": 56,
+    "top": 82,
+    "width": 486,
+    "font_size": 30
+  },
+  "executive_summary": {
+    "left": 56,
+    "top": 154,
+    "width": 486,
+    "font_size": 14
+  },
+  "strategic_priorities": {
+    "left": 56,
+    "top": 262,
+    "width": 486,
+    "font_size": 13
+  },
+  "risk_matrix": {
+    "left": 56,
+    "top": 392,
+    "width": 486,
+    "font_size": 12
+  },
+  "citations": {
+    "left": 56,
+    "top": 560,
+    "width": 486,
+    "font_size": 11
+  },
+  "annexes": {
+    "left": 56,
+    "top": 684,
+    "width": 486,
+    "font_size": 11
+  }
+}

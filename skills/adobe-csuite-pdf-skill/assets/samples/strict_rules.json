@@ -1,0 +1,12 @@
+{
+  "required_phrases": ["PRIVILEGED", "CONFIDENTIAL"],
+  "required_citations": ["SR-1", "SR-2"],
+  "prohibited_patterns": ["[REDACTED_PENDING]", "<REDACT_ME>", "TODO_REDACT"],
+  "forbidden_metadata_keys": ["author", "creator", "producer"],
+  "forbidden_metadata_patterns": ["@", "client name", "draft only"],
+  "min_pages": 1,
+  "redaction": {
+    "pending_patterns": ["[REDACTED_PENDING]", "<REDACT_ME>", "TODO_REDACT"],
+    "sensitive_terms": []
+  }
+}

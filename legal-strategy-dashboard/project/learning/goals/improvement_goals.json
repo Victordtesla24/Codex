@@ -1,0 +1,25 @@
+{
+  "run_date": "2026-02-11",
+  "window_days": 30,
+  "baseline": {
+    "avg_friction": 0.0,
+    "retry_rate": 0.0,
+    "correction_rate": 0.0,
+    "dislike_rate": 0.0,
+    "first_pass_success_rate": 0.0
+  },
+  "targets": {
+    "avg_friction_delta_pct": -8,
+    "retry_rate_delta_pct": -8,
+    "correction_rate_delta_pct": -8,
+    "dislike_rate_delta_pct": -8,
+    "first_pass_success_rate_delta_pct": 8
+  },
+  "current": {
+    "avg_friction": 0.0,
+    "retry_rate": 0.0,
+    "correction_rate": 0.0,
+    "dislike_rate": 0.0,
+    "first_pass_success_rate": 0.0
+  }
+}

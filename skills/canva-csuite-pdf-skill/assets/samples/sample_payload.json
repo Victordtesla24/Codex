@@ -1,0 +1,52 @@
+{
+  "title": "Q1 Litigation Strategy and Regulatory Exposure Brief",
+  "audience": "CEO, General Counsel, Board Risk Committee",
+  "tone": "concise, legal, decision-oriented",
+  "content": "Executive legal risk summary for immediate board briefing.",
+  "executive_summary": [
+    "Active matters increased 18% quarter-over-quarter, concentrated in two jurisdictions.",
+    "Primary exposure is tied to discovery schedule compression and sanctions risk.",
+    "Current reserve posture remains adequate but requires weekly review cadence."
+  ],
+  "strategic_priorities": [
+    "Stabilize discovery operations with outside counsel surge support.",
+    "Lock witness preparation timeline against court-imposed milestones.",
+    "Pre-brief settlement guardrails before next board governance meeting."
+  ],
+  "risk_matrix": [
+    {
+      "risk": "Discovery delay",
+      "impact": "High",
+      "mitigation": "Dedicated cross-functional war room",
+      "owner": "Deputy GC"
+    },
+    {
+      "risk": "Regulatory inquiry expansion",
+      "impact": "Medium",
+      "mitigation": "Early regulator engagement package",
+      "owner": "Chief Compliance Officer"
+    }
+  ],
+  "citations": [
+    {
+      "id": "SR-1",
+      "source": "Outside Counsel Weekly Litigation Memo",
+      "note": "Dated 2026-02-10"
+    },
+    {
+      "id": "SR-2",
+      "source": "Regulatory Enforcement Tracker",
+      "note": "Updated 2026-02-09"
+    }
+  ],
+  "annexes": [
+    {
+      "title": "Matter Status Snapshot",
+      "summary": "Open actions by venue",
+      "items": [
+        "California matter timeline",
+        "Delaware motion calendar"
+      ]
+    }
+  ]
+}

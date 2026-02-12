@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "required": true,
+  "template_name": "C-SUITE-EXEC-PDF-TEMPLATE.pdf",
+  "template_path": "/Users/vics-macbook-pro/.codex/skills/.system/skill-creator/canva-templates/C-SUITE-EXEC-PDF-TEMPLATE.pdf",
+  "sha256": "75755e542ebee31d4ceeeb9d864fa95e1ca68730678b63d7f8164896f872a54d",
+  "policy": "local-folder-only"
+}

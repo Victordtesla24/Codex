@@ -1,0 +1,31 @@
+{
+  "report_date": "2026-02-10",
+  "totals": {
+    "interactions_analyzed": 0,
+    "friction_points": 0,
+    "retries_regenerations": 0,
+    "likes": 0,
+    "dislikes": 0,
+    "corrections": 0
+  },
+  "learning_outcomes": [
+    "Analyzed 0 interactions with 0 friction points.",
+    "Activated 0 runtime rules under balanced guardrails."
+  ],
+  "improvement_goals": [
+    "Reduce retry_rate by 8% from rolling baseline.",
+    "Reduce correction_rate by 8% from rolling baseline.",
+    "Increase first_pass_success_rate by 8% from rolling baseline."
+  ],
+  "adopted_pathway": [
+    "Collect daily telemetry from codex sessions and dashboard events.",
+    "Compute deterministic friction metrics and synthesize category-based rules.",
+    "Activate only guarded rules and inject into runtime prompt construction."
+  ],
+  "actual_improvements_with_evidence": [
+    "Current avg_friction=0.000; baseline=0.000; evidence from interaction_ids in analysis/2026-02-10/interactions.json.",
+    "Current first_pass_success_rate=0.000; tracked in learning/goals/improvement_goals.json."
+  ],
+  "new_skills_acquired": [],
+  "total_acquired_skills": 0
+}

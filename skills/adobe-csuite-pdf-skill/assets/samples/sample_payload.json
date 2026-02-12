@@ -1,0 +1,54 @@
+{
+  "title": "Executive Defence Strategy Brief",
+  "executive_summary": [
+    "Prioritize diversion-first resolution while preserving fallback plea leverage.",
+    "Close brief-disclosure gaps before substantive admissions.",
+    "Maintain documented compliance posture to support mitigation credibility."
+  ],
+  "strategic_priorities": [
+    "Secure complete brief and disclosure register.",
+    "Finalize diversion package with verified supporting records.",
+    "Prepare fallback mitigation bundle for contested outcomes."
+  ],
+  "risk_matrix": [
+    {
+      "risk": "Missing brief artifacts",
+      "impact": "Weakens negotiation and timeline control",
+      "mitigation": "File targeted disclosure request and tracking log",
+      "owner": "Defence Lead"
+    },
+    {
+      "risk": "Unverified compliance evidence",
+      "impact": "Reduces sentencing mitigation strength",
+      "mitigation": "Obtain dated certificates and attach provenance",
+      "owner": "Case Analyst"
+    }
+  ],
+  "citations": [
+    {
+      "id": "SR-1",
+      "source": "Dashboard Core Record",
+      "note": "Primary factual chronology and action status."
+    },
+    {
+      "id": "SR-2",
+      "source": "Proudman v Dayman",
+      "note": "Authority for mens rea framing in road matters."
+    }
+  ],
+  "annexes": [
+    {
+      "title": "Annex A - Disclosure Register",
+      "summary": "Outstanding items and retrieval status.",
+      "items": [
+        "Body-worn footage request",
+        "VicRoads status statement",
+        "Prosecution exhibit index"
+      ]
+    }
+  ],
+  "metadata": {
+    "profile": "strict-legal",
+    "generated_at_utc": "2026-02-12T00:00:00Z"
+  }
+}

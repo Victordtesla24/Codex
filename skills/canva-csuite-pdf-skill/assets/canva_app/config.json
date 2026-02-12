@@ -1,0 +1,13 @@
+{
+  "compatibility": "legacy-config-mirror",
+  "permissions": [
+    "canva:design:content:read",
+    "canva:design:content:write"
+  ],
+  "intent": {
+    "design_editor": {
+      "enrolled": true
+    }
+  },
+  "manifest": "canva-app.json"
+}

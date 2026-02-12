@@ -117,7 +117,8 @@ pushd "${dest_repo}" >/dev/null
 
 git add -A
 
-changed_files="$(git diff --cached --name-only | sed '/^\s*$/d' | wc -l | tr -d ' ')"
+changed_file_list="$(git diff --cached --name-only | sed '/^\s*$/d')"
+changed_files="$(printf '%s\n' "${changed_file_list}" | sed '/^\s*$/d' | wc -l | tr -d ' ')"
 project_count="$(grep -c . "${PROJECT_MANIFEST}" 2>/dev/null || true)"
 adobe_count="$(grep -c . "${ADOBE_MANIFEST}" 2>/dev/null || true)"
 canva_count="$(grep -c . "${CANVA_MANIFEST}" 2>/dev/null || true)"
@@ -144,7 +145,6 @@ if [[ "${changed_files}" -gt 0 ]]; then
   fi
 fi
 
-changed_file_list="$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)"
 popd >/dev/null
 
 python3 - <<PY

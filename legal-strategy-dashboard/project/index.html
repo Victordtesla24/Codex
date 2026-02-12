@@ -26,7 +26,6 @@
     <!-- Google Identity & API Setup -->
     <script src="https://apis.google.com/js/api.js" defer></script>
     <script src="https://accounts.google.com/gsi/client" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 
     <!-- Typography -->
@@ -666,8 +665,8 @@
 
         <!-- Sticky Header -->
         <header
-            class="sticky top-0 z-20 bg-executive-navy/80 backdrop-blur-xl border-b border-white/5 px-6 md:px-10 py-5 flex justify-between items-center shadow-2xl">
-            <div class="flex items-center gap-6">
+            class="sticky top-0 z-20 bg-executive-navy/80 backdrop-blur-xl border-b border-white/5 px-6 md:px-10 py-5 flex flex-wrap gap-3 justify-between items-center shadow-2xl">
+            <div class="flex items-center gap-6 min-w-0">
                 <button id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Open sidebar"
                     aria-controls="sidebar" aria-expanded="false"
                     class="lg:hidden text-white transition-colors hover:text-executive-gold">
@@ -684,13 +683,13 @@
                                 Active</span>
                         </div>
                         <p id="page-subtitle"
-                            class="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em] hidden xs:block border-l border-white/10 pl-3">
+                            class="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em] hidden sm:block border-l border-white/10 pl-3">
                             Hearing: 23 Feb 2026 | Magistrates' Court</p>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3 md:gap-6">
+            <div class="ml-auto flex-shrink-0 flex items-center gap-3 md:gap-6">
                 <!-- Sync Status Indicator -->
                 <div id="sync-status" role="status" aria-live="polite"
                     class="hidden md:flex px-4 py-2 glass-panel rounded-full items-center gap-3 cursor-pointer group transition-all hover:bg-white/5"
@@ -705,8 +704,9 @@
                         Ready</span>
                 </div>
 
-                <button onclick="exportDashboardToPDF(event)" aria-label="Export Strategy Report to PDF"
-                    class="relative z-30 flex px-5 py-2 bg-gold-gradient hover:scale-105 text-white text-[9px] font-bold uppercase tracking-[0.2em] rounded-full transition-all items-center gap-2 shadow-lg border border-white/10">
+                <button id="export-strategy-btn" type="button" onclick="exportDashboardToPDF(event)"
+                    aria-label="Export Strategy Report to PDF"
+                    class="relative z-50 inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-5 py-2 bg-gold-gradient hover:scale-105 text-white text-[9px] font-bold uppercase tracking-[0.2em] rounded-full transition-all shadow-lg border border-white/10">
                     <i class="fa-solid fa-file-pdf"></i> <span>Export Strategy</span>
                 </button>
 
@@ -3564,7 +3564,9 @@ You have access to the dashboard context. When answering:
 
         // --- PDF Export Logic ---
         async function exportDashboardToPDF(evt) {
-            const btn = evt?.currentTarget || document.querySelector('button[onclick*="exportDashboardToPDF"]');
+            const btn = evt?.currentTarget
+                || document.getElementById('export-strategy-btn')
+                || document.querySelector('button[onclick*="exportDashboardToPDF"]');
             const originalText = btn ? btn.innerHTML : '';
             if (btn) {
                 btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Generating Strategy Report...';
@@ -3586,15 +3588,14 @@ You have access to the dashboard context. When answering:
                 const MT = 30;
                 const MB = 270;
                 const CONTENT_W = MR - ML;
-                const CONTENT_H = MB - MT;
                 const MM_PER_PT = 0.352778;
 
                 const COLORS = {
-                    navy: [2, 6, 23],
+                    navy: [15, 23, 42],
                     gold: [212, 175, 55],
                     slate: [51, 65, 85],
                     slateSoft: [71, 85, 105],
-                    watermark: [204, 213, 225],
+                    watermark: [208, 214, 224],
                     headerFill: [235, 240, 246],
                     rowFill: [252, 253, 255],
                     rowFillAlt: [246, 249, 253],
@@ -3633,12 +3634,14 @@ You have access to the dashboard context. When answering:
                 });
                 const filenameDate = exportDate.toISOString().split('T')[0];
                 const fallbackLine = 'Data unavailable at export time.';
+                const continuationQueue = [];
+                const renderedCorpus = [];
 
                 let y = MT;
                 let started = false;
                 let currentSection = 'Executive Brief';
-                let currentTemplate = 'standard';
                 const pageMeta = [];
+                let apraSectionRendered = false;
 
                 const normalizeLine = (value) => normalizeContextText(value || '');
                 const normalizeMultiline = (value) => String(value || '')
@@ -3647,6 +3650,20 @@ You have access to the dashboard context. When answering:
                     .map((line) => normalizeContextText(line))
                     .join('\n')
                     .trim();
+
+                function trackRendered(value) {
+                    if (value == null) return;
+                    if (Array.isArray(value)) {
+                        value.forEach((entry) => trackRendered(entry));
+                        return;
+                    }
+                    const normalized = normalizeLine(value);
+                    if (normalized) renderedCorpus.push(normalized);
+                }
+
+                function queueContinuation(sectionName, title, render) {
+                    continuationQueue.push({ sectionName, title, render });
+                }
 
                 function applyTextStyle(styleKey) {
                     const style = STYLES[styleKey] || STYLES.body;
@@ -3664,8 +3681,7 @@ You have access to the dashboard context. When answering:
 
                 function splitTextExact(text, width, styleKey) {
                     applyTextStyle(styleKey);
-                    const normalized = normalizeLine(text);
-                    const safeText = normalized || ' ';
+                    const safeText = normalizeLine(text) || ' ';
                     const safeWidth = Math.max(8, (Number(width) || CONTENT_W) - 1.2);
                     return doc.splitTextToSize(safeText, safeWidth);
                 }
@@ -3674,23 +3690,36 @@ You have access to the dashboard context. When answering:
                     const lines = splitTextExact(text, width, styleKey);
                     const lineHeightMm = getLineHeightMm(styleKey, lineHeightFactor);
                     const lineCount = Math.max(1, lines.length);
-                    const height = paddingTop + paddingBottom + (lineCount * lineHeightMm);
                     return {
                         lines: lines.length ? lines : [' '],
                         lineHeightMm,
-                        height
+                        height: paddingTop + paddingBottom + (lineCount * lineHeightMm)
                     };
                 }
 
                 function drawWatermark() {
+                    const wmText = 'PRIVILEGED & CONFIDENTIAL';
+                    trackRendered(wmText);
+
                     doc.setFont('times', 'bold');
                     doc.setFontSize(24);
-                    doc.setTextColor(...COLORS.watermark);
-                    doc.text('PRIVILEGED & CONFIDENTIAL', PAGE_W / 2, PAGE_H / 2, {
-                        align: 'center',
-                        baseline: 'middle',
-                        angle: 45
-                    });
+                    if (typeof doc.GState === 'function' && typeof doc.setGState === 'function') {
+                        doc.setGState(new doc.GState({ opacity: 0.12 }));
+                        doc.setTextColor(...COLORS.watermark);
+                        doc.text(wmText, PAGE_W / 2, PAGE_H / 2, {
+                            align: 'center',
+                            baseline: 'middle',
+                            angle: 45
+                        });
+                        doc.setGState(new doc.GState({ opacity: 1 }));
+                    } else {
+                        doc.setTextColor(225, 230, 238);
+                        doc.text(wmText, PAGE_W / 2, PAGE_H / 2, {
+                            align: 'center',
+                            baseline: 'middle',
+                            angle: 45
+                        });
+                    }
                 }
 
                 function drawHeaderChrome(sectionLabel) {
@@ -3701,8 +3730,9 @@ You have access to the dashboard context. When answering:
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(7.8);
                     doc.setTextColor(...COLORS.slate);
-                    doc.text('Privileged & Confidential', ML, 8.2, { baseline: 'top' });
+                    doc.text('PRIVILEGED & CONFIDENTIAL', ML, 8.2, { baseline: 'top' });
                     doc.text(exportDateLabel, MR, 8.2, { align: 'right', baseline: 'top' });
+                    trackRendered(['PRIVILEGED', 'CONFIDENTIAL', sectionLabel]);
 
                     doc.setFont('helvetica', 'bold');
                     doc.setFontSize(7.2);
@@ -3718,7 +3748,7 @@ You have access to the dashboard context. When answering:
                 function drawFooterChrome(sectionLabel, pageNo = null, totalPages = null, clearTextZone = false) {
                     if (clearTextZone) {
                         doc.setFillColor(255, 255, 255);
-                        doc.rect(ML, 284, CONTENT_W, 7.6, 'F');
+                        doc.rect(ML, 284, MR - ML, 7.6, 'F');
                     }
 
                     doc.setDrawColor(...COLORS.gold);
@@ -3735,16 +3765,15 @@ You have access to the dashboard context. When answering:
                     doc.text(pageLabel, MR, 284.6, { align: 'right', baseline: 'top' });
                 }
 
-                function addBrandedPage(sectionName, continuation = false, pageTemplate = 'standard') {
+                function addBrandedPage(sectionName, continuation = false) {
                     if (started) {
                         doc.addPage();
                     } else {
                         started = true;
                     }
                     currentSection = sectionName;
-                    currentTemplate = pageTemplate;
                     const sectionLabel = continuation ? `${sectionName} (Cont.)` : sectionName;
-                    pageMeta.push({ section: sectionName, continuation, template: pageTemplate, label: sectionLabel });
+                    pageMeta.push({ section: sectionName, continuation, label: sectionLabel });
 
                     drawWatermark();
                     drawHeaderChrome(sectionLabel);
@@ -3756,7 +3785,7 @@ You have access to the dashboard context. When answering:
                     const safeHeight = Math.max(0, requiredHeight || 0);
                     const safeKeep = Math.max(0, keepWithNextHeight || 0);
                     if (y + safeHeight + safeKeep > MB) {
-                        addBrandedPage(currentSection, true, currentTemplate);
+                        addBrandedPage(currentSection, true);
                     }
                 }
 
@@ -3769,6 +3798,7 @@ You have access to the dashboard context. When answering:
                         baseline: 'top',
                         lineHeightFactor: lineHeightFactor || style.lineHeight
                     });
+                    trackRendered(block.lines);
                     return block.height;
                 }
 
@@ -3776,7 +3806,7 @@ You have access to the dashboard context. When answering:
                     const titleBlock = measureTextBlock(title, CONTENT_W, 'sectionHeader');
                     const subtitleBlock = subtitle
                         ? measureTextBlock(subtitle, CONTENT_W, 'subHeader')
-                        : { lines: [], height: 0, lineHeightMm: 0 };
+                        : { lines: [], height: 0 };
                     const needed = titleBlock.height + (subtitle ? subtitleBlock.height + 4 : 2.6) + 2.2;
                     checkPageBreak(needed, 4.2);
 
@@ -3785,6 +3815,7 @@ You have access to the dashboard context. When answering:
                         baseline: 'top',
                         lineHeightFactor: STYLES.sectionHeader.lineHeight
                     });
+                    trackRendered(titleBlock.lines);
                     y += titleBlock.height + 1.2;
 
                     doc.setDrawColor(...COLORS.gold);
@@ -3798,6 +3829,7 @@ You have access to the dashboard context. When answering:
                             baseline: 'top',
                             lineHeightFactor: STYLES.subHeader.lineHeight
                         });
+                        trackRendered(subtitleBlock.lines);
                         y += subtitleBlock.height + 1.8;
                     } else {
                         y += 1.4;
@@ -3812,6 +3844,7 @@ You have access to the dashboard context. When answering:
                         baseline: 'top',
                         lineHeightFactor: STYLES.subHeader.lineHeight
                     });
+                    trackRendered(block.lines);
                     y += block.height + 1.3;
                 }
 
@@ -3828,10 +3861,7 @@ You have access to the dashboard context. When answering:
                     const raw = preserveLineBreaks ? String(text || '').replace(/\r/g, '') : normalizeLine(text || '');
                     if (!raw) return;
 
-                    const paragraphs = preserveLineBreaks
-                        ? raw.split('\n')
-                        : [raw];
-
+                    const paragraphs = preserveLineBreaks ? raw.split('\n') : [raw];
                     paragraphs.forEach((paragraph, idx) => {
                         const normalizedParagraph = preserveLineBreaks ? normalizeLine(paragraph) : paragraph;
                         if (!normalizedParagraph) {
@@ -3846,6 +3876,7 @@ You have access to the dashboard context. When answering:
                             baseline: 'top',
                             lineHeightFactor: lineHeightFactor || style.lineHeight
                         });
+                        trackRendered(block.lines);
                         y += block.height + (idx === paragraphs.length - 1 ? afterGap : 1.1);
                     });
                 }
@@ -3870,6 +3901,7 @@ You have access to the dashboard context. When answering:
                             baseline: 'top',
                             lineHeightFactor: style.lineHeight
                         });
+                        trackRendered(block.lines);
                         y += block.height + gap;
                     });
                 }
@@ -3889,10 +3921,7 @@ You have access to the dashboard context. When answering:
                     const raw = preserveLineBreaks ? String(text || '').replace(/\r/g, '') : normalizeLine(text || '');
                     if (!raw) return;
 
-                    const paragraphs = preserveLineBreaks
-                        ? raw.split('\n')
-                        : [raw];
-
+                    const paragraphs = preserveLineBreaks ? raw.split('\n') : [raw];
                     const lines = [];
                     paragraphs.forEach((paragraph, index) => {
                         const normalizedParagraph = normalizeLine(paragraph);
@@ -3912,12 +3941,12 @@ You have access to the dashboard context. When answering:
                     while (cursor < effectiveLines.length) {
                         const minimumHeight = (2 * paddingY) + lineHeight;
                         if (y + minimumHeight > MB) {
-                            addBrandedPage(currentSection, true, currentTemplate);
+                            addBrandedPage(currentSection, true);
                         }
 
                         const availableLines = Math.floor((MB - y - (2 * paddingY)) / lineHeight);
                         if (availableLines < 1) {
-                            addBrandedPage(currentSection, true, currentTemplate);
+                            addBrandedPage(currentSection, true);
                             continue;
                         }
 
@@ -3948,12 +3977,13 @@ You have access to the dashboard context. When answering:
                             baseline: 'top',
                             lineHeightFactor: style.lineHeight
                         });
+                        trackRendered(chunk);
 
                         y += boxHeight + afterGap;
                         cursor += linesThisChunk;
 
                         if (cursor < effectiveLines.length) {
-                            addBrandedPage(currentSection, true, currentTemplate);
+                            addBrandedPage(currentSection, true);
                         }
                     }
                 }
@@ -3978,19 +4008,13 @@ You have access to the dashboard context. When answering:
                         const value = measureTextBlock(valueText, cardWidth - (2 * cardPaddingX), 'kpiValue');
                         const detail = detailText
                             ? measureTextBlock(detailText, cardWidth - (2 * cardPaddingX), 'kpiBody')
-                            : { lines: [], lineHeightMm: getLineHeightMm('kpiBody'), height: 0 };
-
-                        const bodyHeight = label.height + value.height + detail.height + 2.2;
-                        const totalHeight = bodyHeight + (2 * cardPaddingY);
+                            : { lines: [], height: 0 };
 
                         return {
                             label,
                             value,
                             detail,
-                            totalHeight,
-                            labelText,
-                            valueText,
-                            detailText
+                            totalHeight: label.height + value.height + detail.height + (2 * cardPaddingY) + 2.2
                         };
                     }
 
@@ -4001,12 +4025,12 @@ You have access to the dashboard context. When answering:
                         doc.roundedRect(xPos, yPos, cardWidth, cardHeight, 1.8, 1.8, 'FD');
 
                         let textY = yPos + cardPaddingY;
-
                         applyTextStyle('kpiLabel');
                         doc.text(prepared.label.lines, xPos + cardPaddingX, textY, {
                             baseline: 'top',
                             lineHeightFactor: STYLES.kpiLabel.lineHeight
                         });
+                        trackRendered(prepared.label.lines);
                         textY += prepared.label.height + 0.8;
 
                         applyTextStyle('kpiValue');
@@ -4014,6 +4038,7 @@ You have access to the dashboard context. When answering:
                             baseline: 'top',
                             lineHeightFactor: STYLES.kpiValue.lineHeight
                         });
+                        trackRendered(prepared.value.lines);
                         textY += prepared.value.height + 0.9;
 
                         if (prepared.detail.lines.length) {
@@ -4022,120 +4047,28 @@ You have access to the dashboard context. When answering:
                                 baseline: 'top',
                                 lineHeightFactor: STYLES.kpiBody.lineHeight
                             });
-                        }
-                    }
-
-                    function drawSingleCardWithSplit(card) {
-                        const cardWidth = CONTENT_W;
-                        const prepared = prepareCard(card, cardWidth);
-                        const detailLines = prepared.detail.lines.length ? prepared.detail.lines.slice() : [' '];
-                        const fixedHeight = (2 * cardPaddingY) + prepared.label.height + prepared.value.height + 2.1;
-                        const detailLineHeight = getLineHeightMm('kpiBody');
-                        let offset = 0;
-                        let firstChunk = true;
-
-                        while (offset < detailLines.length || firstChunk) {
-                            if (y + fixedHeight + detailLineHeight > MB) {
-                                addBrandedPage(currentSection, true, currentTemplate);
-                            }
-                            const availableLines = Math.floor((MB - y - fixedHeight - cardPaddingY) / detailLineHeight);
-                            const linesThisChunk = Math.max(1, Math.min(availableLines, detailLines.length - offset || 1));
-                            const detailChunk = detailLines.slice(offset, offset + linesThisChunk);
-                            const labelText = firstChunk
-                                ? prepared.labelText
-                                : `${prepared.labelText} (cont.)`;
-                            const labelBlock = measureTextBlock(labelText, cardWidth - (2 * cardPaddingX), 'kpiLabel');
-                            const valueBlock = prepared.value;
-                            const detailBlockHeight = linesThisChunk * detailLineHeight;
-                            const cardHeight = (2 * cardPaddingY) + labelBlock.height + valueBlock.height + detailBlockHeight + 2.1;
-
-                            checkPageBreak(cardHeight);
-
-                            doc.setFillColor(...COLORS.cardFill);
-                            doc.setDrawColor(...COLORS.cardStroke);
-                            doc.setLineWidth(0.25);
-                            doc.roundedRect(ML, y, cardWidth, cardHeight, 1.8, 1.8, 'FD');
-
-                            let textY = y + cardPaddingY;
-                            applyTextStyle('kpiLabel');
-                            doc.text(labelBlock.lines, ML + cardPaddingX, textY, {
-                                baseline: 'top',
-                                lineHeightFactor: STYLES.kpiLabel.lineHeight
-                            });
-                            textY += labelBlock.height + 0.8;
-
-                            applyTextStyle('kpiValue');
-                            doc.text(valueBlock.lines, ML + cardPaddingX, textY, {
-                                baseline: 'top',
-                                lineHeightFactor: STYLES.kpiValue.lineHeight
-                            });
-                            textY += valueBlock.height + 0.9;
-
-                            applyTextStyle('kpiBody');
-                            doc.text(detailChunk, ML + cardPaddingX, textY, {
-                                baseline: 'top',
-                                lineHeightFactor: STYLES.kpiBody.lineHeight
-                            });
-
-                            y += cardHeight + afterGap;
-                            offset += linesThisChunk;
-                            firstChunk = false;
-
-                            if (offset < detailLines.length) {
-                                addBrandedPage(currentSection, true, currentTemplate);
-                            }
+                            trackRendered(prepared.detail.lines);
                         }
                     }
 
                     for (let i = 0; i < cleaned.length; i += columns) {
                         const rowCards = cleaned.slice(i, i + columns);
-
-                        if (rowCards.length === 1 && columns === 2) {
-                            const singlePrepared = prepareCard(rowCards[0], CONTENT_W);
-                            if (singlePrepared.totalHeight > CONTENT_H - 2) {
-                                drawSingleCardWithSplit(rowCards[0]);
-                                continue;
-                            }
-                            checkPageBreak(singlePrepared.totalHeight + afterGap);
-                            drawCard(singlePrepared, ML, y, CONTENT_W, singlePrepared.totalHeight);
-                            y += singlePrepared.totalHeight + afterGap;
-                            continue;
-                        }
-
                         const preparedCards = rowCards.map((card) => prepareCard(card, columnWidth));
                         const rowHeight = Math.max(...preparedCards.map((card) => card.totalHeight));
-
-                        if (rowHeight > CONTENT_H - 2) {
-                            rowCards.forEach((card) => drawSingleCardWithSplit(card));
-                            continue;
-                        }
-
                         checkPageBreak(rowHeight + afterGap);
-
                         preparedCards.forEach((preparedCard, index) => {
                             const xPos = ML + (index * (columnWidth + gap));
                             drawCard(preparedCard, xPos, y, columnWidth, rowHeight);
                         });
-
                         y += rowHeight + afterGap;
                     }
                 }
 
                 function drawTableGrid(config) {
-                    const {
-                        columns,
-                        rows,
-                        x = ML,
-                        width = CONTENT_W,
-                        afterGap = 2.4
-                    } = config;
-
+                    const { columns, rows, x = ML, width = CONTENT_W, afterGap = 2.4 } = config;
                     if (!Array.isArray(columns) || !columns.length) return;
 
-                    const safeRows = (rows || []).length ? rows : [{
-                        [columns[0].key || 'col0']: fallbackLine
-                    }];
-
+                    const safeRows = (rows || []).length ? rows : [{ [columns[0].key || 'col0']: fallbackLine }];
                     const fractions = columns.map((column) => Number(column.width) || 1);
                     const fractionTotal = fractions.reduce((sum, value) => sum + value, 0) || columns.length;
                     const colWidths = fractions.map((fraction) => (width * fraction) / fractionTotal);
@@ -4151,12 +4084,10 @@ You have access to the dashboard context. When answering:
                         const lines = splitTextExact(label, colWidths[index] - (2 * cellPaddingX), 'tableHeader');
                         return lines.length ? lines : [' '];
                     });
-
                     const headerHeight = (Math.max(...headerCells.map((lines) => lines.length)) * headLineHeight) + (2 * cellPaddingY);
 
                     function drawHeaderRow() {
                         checkPageBreak(headerHeight + minRowHeight);
-
                         doc.setFillColor(...COLORS.headerFill);
                         doc.setDrawColor(...COLORS.border);
                         doc.setLineWidth(0.25);
@@ -4164,14 +4095,13 @@ You have access to the dashboard context. When answering:
 
                         let cursorX = x;
                         columns.forEach((column, index) => {
-                            if (index > 0) {
-                                doc.line(cursorX, y, cursorX, y + headerHeight);
-                            }
+                            if (index > 0) doc.line(cursorX, y, cursorX, y + headerHeight);
                             applyTextStyle('tableHeader');
                             doc.text(headerCells[index], cursorX + cellPaddingX, y + cellPaddingY, {
                                 baseline: 'top',
                                 lineHeightFactor: STYLES.tableHeader.lineHeight
                             });
+                            trackRendered(headerCells[index]);
                             cursorX += colWidths[index];
                         });
                         doc.line(x + width, y, x + width, y + headerHeight);
@@ -4183,11 +4113,9 @@ You have access to the dashboard context. When answering:
                     safeRows.forEach((row, rowIndex) => {
                         const cellLines = columns.map((column, columnIndex) => {
                             const key = column.key || String(columnIndex);
-                            const rawValue = Array.isArray(row)
-                                ? row[columnIndex]
-                                : row[key];
-                            const value = normalizeLine(rawValue || '');
-                            const lines = splitTextExact(value || ' ', colWidths[columnIndex] - (2 * cellPaddingX), 'tableBody');
+                            const rawValue = Array.isArray(row) ? row[columnIndex] : row[key];
+                            const value = normalizeLine(rawValue || ' ');
+                            const lines = splitTextExact(value, colWidths[columnIndex] - (2 * cellPaddingX), 'tableBody');
                             return lines.length ? lines : [' '];
                         });
 
@@ -4196,25 +4124,23 @@ You have access to the dashboard context. When answering:
 
                         while (hasRemaining()) {
                             if (y + minRowHeight > MB) {
-                                addBrandedPage(currentSection, true, currentTemplate);
+                                addBrandedPage(currentSection, true);
                                 drawHeaderRow();
                             }
 
                             const availableLines = Math.floor((MB - y - (2 * cellPaddingY)) / rowLineHeight);
                             if (availableLines < 1) {
-                                addBrandedPage(currentSection, true, currentTemplate);
+                                addBrandedPage(currentSection, true);
                                 drawHeaderRow();
                                 continue;
                             }
 
-                            const remainingMax = Math.max(
-                                ...cellLines.map((lines, idx) => lines.length - offsets[idx])
-                            );
+                            const remainingMax = Math.max(...cellLines.map((lines, idx) => lines.length - offsets[idx]));
                             const linesThisChunk = Math.max(1, Math.min(availableLines, remainingMax));
                             const rowHeight = (linesThisChunk * rowLineHeight) + (2 * cellPaddingY);
 
                             if (y + rowHeight > MB) {
-                                addBrandedPage(currentSection, true, currentTemplate);
+                                addBrandedPage(currentSection, true);
                                 drawHeaderRow();
                                 continue;
                             }
@@ -4227,9 +4153,7 @@ You have access to the dashboard context. When answering:
 
                             let cursorX = x;
                             columns.forEach((column, columnIndex) => {
-                                if (columnIndex > 0) {
-                                    doc.line(cursorX, y, cursorX, y + rowHeight);
-                                }
+                                if (columnIndex > 0) doc.line(cursorX, y, cursorX, y + rowHeight);
 
                                 const remaining = cellLines[columnIndex].length - offsets[columnIndex];
                                 const chunkLength = Math.max(0, Math.min(linesThisChunk, remaining));
@@ -4242,6 +4166,7 @@ You have access to the dashboard context. When answering:
                                         baseline: 'top',
                                         lineHeightFactor: STYLES.tableBody.lineHeight
                                     });
+                                    trackRendered(chunk);
                                 }
                                 cursorX += colWidths[columnIndex];
                             });
@@ -4283,7 +4208,7 @@ You have access to the dashboard context. When answering:
                         cards.push({
                             label: 'Probability Indicator',
                             value: 'Evidence-Gated',
-                            detail: 'No numerical probability is present in the live dashboard. Outcome remains contingent on certificates, admissibility, and brief completeness.'
+                            detail: 'No numeric probability is present in the live dashboard. Outcome remains contingent on certificates, admissibility, and brief completeness.'
                         });
                     }
 
@@ -4293,9 +4218,9 @@ You have access to the dashboard context. When answering:
                             ? CANONICAL_TIMELINE_EVENTS.filter((eventItem) => /intercept|stop/i.test(`${eventItem.dateLabel} ${eventItem.title}`)).length
                             : 0;
                         cards.push({
-                            label: 'Conduct Indicator',
+                            label: 'Harassment / Conduct Index',
                             value: `${interceptCount || 0} intercept events`,
-                            detail: 'Derived from the current canonical chronology loaded in the dashboard context.'
+                            detail: 'Derived from live chronology context for conduct-pattern review.'
                         });
                     }
 
@@ -4303,7 +4228,7 @@ You have access to the dashboard context. When answering:
                         purpose: summaryParagraphs[0] || fallbackLine,
                         status: summaryParagraphs[1] || fallbackLine,
                         priorities: priorities.length ? priorities : ['Maintain evidence-led submissions and avoid unsupported claims.'],
-                        cards: cards.slice(0, 6)
+                        cards: cards.slice(0, 8)
                     };
                 }
 
@@ -4342,11 +4267,7 @@ You have access to the dashboard context. When answering:
                         conditional,
                         statusCards: statusCards.length
                             ? statusCards
-                            : [{
-                                label: 'Operational Status',
-                                value: 'Intervention Panel Available',
-                                detail: fallbackLine
-                            }]
+                            : [{ label: 'Operational Status', value: 'Intervention Panel Available', detail: fallbackLine }]
                     };
                 }
 
@@ -4367,7 +4288,6 @@ You have access to the dashboard context. When answering:
                         .filter((row) => row.date || row.incident || row.strategicWeight);
 
                     if (domRows.length) return domRows;
-
                     if (Array.isArray(CANONICAL_TIMELINE_EVENTS) && CANONICAL_TIMELINE_EVENTS.length) {
                         return CANONICAL_TIMELINE_EVENTS.map((eventItem) => ({
                             date: normalizeLine(eventItem.dateLabel || ''),
@@ -4376,11 +4296,7 @@ You have access to the dashboard context. When answering:
                         }));
                     }
 
-                    return [{
-                        date: 'Timeline',
-                        incident: 'No chronology entries detected',
-                        strategicWeight: fallbackLine
-                    }];
+                    return [{ date: 'Timeline', incident: 'No chronology entries detected', strategicWeight: fallbackLine }];
                 }
 
                 function extractMatrixRows() {
@@ -4397,7 +4313,6 @@ You have access to the dashboard context. When answering:
                         .filter((row) => row.allegation || row.reality || row.evidence || row.source);
 
                     if (domRows.length) return domRows;
-
                     if (Array.isArray(CANONICAL_TRUTH_MATRIX_ROWS) && CANONICAL_TRUTH_MATRIX_ROWS.length) {
                         return CANONICAL_TRUTH_MATRIX_ROWS.map((row) => ({
                             allegation: normalizeLine(row.allegation || ''),
@@ -4407,12 +4322,61 @@ You have access to the dashboard context. When answering:
                         }));
                     }
 
-                    return [{
-                        allegation: 'Truth matrix unavailable',
-                        reality: fallbackLine,
-                        evidence: fallbackLine,
-                        source: fallbackLine
-                    }];
+                    return [{ allegation: 'Truth matrix unavailable', reality: fallbackLine, evidence: fallbackLine, source: fallbackLine }];
+                }
+
+                function extractPscData() {
+                    const root = document.getElementById('view-harassment');
+                    const paragraphs = Array.from(root?.querySelectorAll('p') || [])
+                        .map((node) => normalizeLine(node.textContent))
+                        .filter(Boolean);
+                    const summary = paragraphs.find((line) => /single source of truth|forensic audit/i.test(line))
+                        || paragraphs[0]
+                        || fallbackLine;
+
+                    const strengthPanelHeading = Array.from(root?.querySelectorAll('h3') || [])
+                        .find((node) => /what the dashboard does well/i.test(normalizeLine(node.textContent)));
+                    const strengthPanel = strengthPanelHeading?.closest('.glass-panel');
+                    const strengths = Array.from(strengthPanel?.querySelectorAll('p') || [])
+                        .map((node) => normalizeLine(node.textContent))
+                        .filter(Boolean);
+
+                    const correctivePanelHeading = Array.from(root?.querySelectorAll('h3') || [])
+                        .find((node) => /immediate corrective action/i.test(normalizeLine(node.textContent)));
+                    const correctivePanel = correctivePanelHeading?.closest('.glass-panel');
+                    const corrective = Array.from(correctivePanel?.querySelectorAll('p') || [])
+                        .map((node) => normalizeLine(node.textContent))
+                        .filter(Boolean);
+
+                    const riskRows = Array.from(root?.querySelectorAll('table tbody tr') || [])
+                        .map((row) => {
+                            const cells = Array.from(row.querySelectorAll('td')).map((cell) => normalizeLine(cell.textContent));
+                            return {
+                                issue: cells[0] || '',
+                                why: cells[1] || '',
+                                likelihood: cells[2] || '',
+                                impact: cells[3] || ''
+                            };
+                        })
+                        .filter((row) => row.issue || row.why || row.likelihood || row.impact);
+
+                    return {
+                        summary,
+                        strengths: strengths.length ? strengths : [
+                            'Centralises key case artefacts into a single narrative surface.',
+                            'Maps doctrine and evidence dependencies in one operational view.'
+                        ],
+                        corrective: corrective.length ? corrective : [
+                            'Apply a provability filter to remove unsupported assertions.',
+                            'Use conditional submissions tied to documentary proof.'
+                        ],
+                        riskRows: riskRows.length ? riskRows : [{
+                            issue: 'Evidence hygiene and admissibility drift',
+                            why: 'Narrative quality degrades when claims are not anchored to dated records and certificates.',
+                            likelihood: 'Medium',
+                            impact: 'High'
+                        }]
+                    };
                 }
 
                 function extractLegalData() {
@@ -4444,8 +4408,8 @@ You have access to the dashboard context. When answering:
                     const apraFromDoctrine = doctrineCards.find((item) => /APRA|fit-and-proper|CPS 520/i.test(`${item.title} ${item.meta} ${item.detail}`));
                     const apraRisk = apraFromDoctrine
                         ? normalizeLine(`${apraFromDoctrine.meta} ${apraFromDoctrine.detail}`)
-                        : (paragraphs.find((line) => /APRA|CPS 520|fit-and-proper/i.test(line)) ||
-                            'Occupational impact is role and framework dependent; APRA CPS 520 considerations should be handled with objective documentary support.');
+                        : (paragraphs.find((line) => /APRA|CPS 520|fit-and-proper/i.test(line))
+                            || 'Occupational impact is role and framework dependent; APRA CPS 520 considerations should be handled with objective documentary support.');
 
                     const caveat = paragraphs.find((line) => /section 59 has offence exclusions|charge-by-charge eligibility/i.test(line))
                         || 'Verified legislation indicates section 59 has offence exclusions (including certain Road Safety Act s49(1) offences). Treat diversion as charge-by-charge eligibility plus prosecution/court practice, not an automatic entitlement.';
@@ -4453,12 +4417,7 @@ You have access to the dashboard context. When answering:
                     return {
                         doctrineCards: doctrineCards.length
                             ? doctrineCards
-                            : [{
-                                title: 'Core Doctrine',
-                                meta: 'Proudman v Dayman (1941) 67 CLR 536',
-                                detail: fallbackLine,
-                                tactical: ''
-                            }],
+                            : [{ title: 'Core Doctrine', meta: 'Proudman v Dayman (1941) 67 CLR 536', detail: fallbackLine, tactical: '' }],
                         guardrails: guardrails.length
                             ? guardrails
                             : ['Separate provable facts from submissions and avoid unsupported assertions.'],
@@ -4469,7 +4428,6 @@ You have access to the dashboard context. When answering:
 
                 function extractFinancialData() {
                     const root = document.getElementById('view-financial');
-
                     const protocolRows = Array.from(root?.querySelectorAll('.flex.justify-between') || [])
                         .map((row) => {
                             const left = normalizeLine(row.children[0]?.textContent || '');
@@ -4523,8 +4481,8 @@ You have access to the dashboard context. When answering:
                                     detail: 'Testing records, analyst certificates, chain-of-custody, procedure warnings, and BWC/police notes.'
                                 }
                             ],
-                        aggregateNote: normalizeLine(`${aggregateSpan || 'Aggregate conduct evidence leverage.'} ${aggregateValue || ''}`) ||
-                            'Negative intercept records, impound receipts, and complaint chronology should be indexed for mitigation and proportionality submissions.'
+                        aggregateNote: normalizeLine(`${aggregateSpan || 'Aggregate conduct evidence leverage.'} ${aggregateValue || ''}`)
+                            || 'Negative intercept records, impound receipts, and complaint chronology should be indexed for mitigation and proportionality submissions.'
                     };
                 }
 
@@ -4540,7 +4498,6 @@ You have access to the dashboard context. When answering:
 
                     const judicialNote = normalizeLine(document.getElementById('magistrate-feedback')?.textContent || '')
                         || 'Judicial simulator note unavailable at export time.';
-
                     const scriptLive = normalizeMultiline(document.getElementById('courtScript')?.value || '');
 
                     return {
@@ -4562,11 +4519,13 @@ You have access to the dashboard context. When answering:
                 const interventionData = extractInterventionData();
                 const timelineRows = extractTimelineRows();
                 const matrixRows = extractMatrixRows();
+                const pscData = extractPscData();
                 const legalData = extractLegalData();
                 const financialData = extractFinancialData();
                 const courtData = extractCourtData();
 
-                addBrandedPage('Cover', false, 'cover');
+                // Page 1 - Cover
+                addBrandedPage('Cover', false);
                 doc.setDrawColor(...COLORS.gold);
                 doc.setLineWidth(0.35);
                 doc.line(ML, 56, MR, 56);
@@ -4585,7 +4544,8 @@ You have access to the dashboard context. When answering:
                 coverY += 14;
                 drawCenteredText(`Prepared ${exportDateLabel}`, 'subHeader', coverY, 120);
 
-                addBrandedPage('Table of Contents', false, 'toc');
+                // Page 2 - TOC
+                addBrandedPage('Table of Contents', false);
                 drawSectionHeader('Table of Contents', 'Strategic section map aligned to executive review standard.');
                 drawTableGrid({
                     columns: [
@@ -4597,9 +4557,9 @@ You have access to the dashboard context. When answering:
                         { section: 'Immediate Intervention', page: '4' },
                         { section: 'Canonical Timeline', page: '5' },
                         { section: 'Truth Matrix', page: '6' },
-                        { section: 'Deep Dive I - Legal Framework', page: '7' },
-                        { section: 'Deep Dive II - Evidence Audit', page: '8' },
-                        { section: 'Deep Dive III - Court Plan', page: '9' },
+                        { section: 'Deep Dive I - PSC Analysis', page: '7' },
+                        { section: 'Deep Dive II - APRA Regulatory Risk', page: '8' },
+                        { section: 'Deep Dive III - Financial Audit', page: '9' },
                         { section: 'Roadmap / Oral Submission', page: '10' }
                     ]
                 });
@@ -4607,21 +4567,37 @@ You have access to the dashboard context. When answering:
                 drawBulletedList([
                     'Strict rendering margins: 25 mm left/right and 30-270 mm content band.',
                     'All text blocks are split with style-aware splitTextToSize before drawing.',
-                    'Pagination is dynamic with keep-with-next protection on headers and tables.',
+                    'Core section order is fixed to 10 pages; overflow is appended as continuation pages.',
                     'Header and footer chrome are rendered on every page with final page stamping.'
                 ]);
 
-                addBrandedPage('Executive Summary', false, 'summary');
+                // Page 3 - Executive Summary
+                addBrandedPage('Executive Summary', false);
                 drawSectionHeader('Case Snapshot & Objectives', 'Purpose and strategic baseline from the live dashboard context.');
                 drawSubHeader('Purpose and Context', 8);
                 drawWrappedParagraph(dashboardData.purpose);
                 drawWrappedParagraph(dashboardData.status, { styleKey: 'body' });
                 drawSubHeader('Key Strategic Indicators', 18);
-                drawKpiCards(dashboardData.cards.slice(0, 4), { columns: 2 });
+                const coreSummaryCards = dashboardData.cards.slice(0, 4);
+                const overflowSummaryCards = dashboardData.cards.slice(4);
+                drawKpiCards(coreSummaryCards, { columns: 2 });
+                if (overflowSummaryCards.length) {
+                    queueContinuation('Executive Summary', 'Additional Strategic Indicators', () => {
+                        drawKpiCards(overflowSummaryCards, { columns: 2 });
+                    });
+                }
                 drawSubHeader('Strategic Priorities', 10);
-                drawBulletedList(dashboardData.priorities);
+                const corePriorities = dashboardData.priorities.slice(0, 4);
+                const overflowPriorities = dashboardData.priorities.slice(4);
+                drawBulletedList(corePriorities);
+                if (overflowPriorities.length) {
+                    queueContinuation('Executive Summary', 'Additional Strategic Priorities', () => {
+                        drawBulletedList(overflowPriorities);
+                    });
+                }
 
-                addBrandedPage('Immediate Intervention', false, 'intervention');
+                // Page 4 - Intervention
+                addBrandedPage('Immediate Intervention', false);
                 drawSectionHeader('Forensic Audit of Dashboard', 'Immediate protocol and corrective framing for lawful interactions.');
                 drawSubHeader('Immediate Protocol Script', 14);
                 drawCallout(interventionData.script, { tone: 'neutral' });
@@ -4629,21 +4605,46 @@ You have access to the dashboard context. When answering:
                 drawWrappedParagraph(interventionData.correctiveRule);
                 drawCallout(interventionData.conditional, { tone: 'accent' });
                 drawSubHeader('Operational Status', 20);
-                drawKpiCards(interventionData.statusCards.slice(0, 3), { columns: 2 });
+                const coreStatusCards = interventionData.statusCards.slice(0, 3);
+                const overflowStatusCards = interventionData.statusCards.slice(3);
+                drawKpiCards(coreStatusCards, { columns: 2 });
+                if (overflowStatusCards.length) {
+                    queueContinuation('Immediate Intervention', 'Operational Status (Cont.)', () => {
+                        drawKpiCards(overflowStatusCards, { columns: 2 });
+                    });
+                }
 
-                addBrandedPage('Canonical Timeline', false, 'timeline');
+                // Page 5 - Timeline
+                addBrandedPage('Canonical Timeline', false);
                 drawSectionHeader('Procedural Pathway & Hearing Plan', 'Dashboard-derived chronology requiring certificate and brief verification.');
+                const coreTimelineRows = timelineRows.slice(0, 9);
+                const overflowTimelineRows = timelineRows.slice(9);
                 drawTableGrid({
                     columns: [
                         { key: 'date', label: 'Date', width: 0.22 },
                         { key: 'incident', label: 'Incident', width: 0.26 },
                         { key: 'strategicWeight', label: 'Strategic Weight', width: 0.52 }
                     ],
-                    rows: timelineRows
+                    rows: coreTimelineRows
                 });
+                if (overflowTimelineRows.length) {
+                    queueContinuation('Canonical Timeline', 'Canonical Timeline', () => {
+                        drawTableGrid({
+                            columns: [
+                                { key: 'date', label: 'Date', width: 0.22 },
+                                { key: 'incident', label: 'Incident', width: 0.26 },
+                                { key: 'strategicWeight', label: 'Strategic Weight', width: 0.52 }
+                            ],
+                            rows: overflowTimelineRows
+                        });
+                    });
+                }
 
-                addBrandedPage('Truth Matrix', false, 'matrix');
+                // Page 6 - Truth Matrix
+                addBrandedPage('Truth Matrix', false);
                 drawSectionHeader('Probability Matrix & Risk Map', 'Truth matrix generated from allegation-to-evidence mapping.');
+                const coreMatrixRows = matrixRows.slice(0, 7);
+                const overflowMatrixRows = matrixRows.slice(7);
                 drawTableGrid({
                     columns: [
                         { key: 'allegation', label: 'Police Allegation', width: 0.23 },
@@ -4651,61 +4652,192 @@ You have access to the dashboard context. When answering:
                         { key: 'evidence', label: 'Evidence Key', width: 0.24 },
                         { key: 'source', label: 'Dependencies / Source Register', width: 0.20 }
                     ],
-                    rows: matrixRows
+                    rows: coreMatrixRows
+                });
+                if (overflowMatrixRows.length) {
+                    queueContinuation('Truth Matrix', 'Truth Matrix', () => {
+                        drawTableGrid({
+                            columns: [
+                                { key: 'allegation', label: 'Police Allegation', width: 0.23 },
+                                { key: 'reality', label: 'Forensic Reality', width: 0.33 },
+                                { key: 'evidence', label: 'Evidence Key', width: 0.24 },
+                                { key: 'source', label: 'Dependencies / Source Register', width: 0.20 }
+                            ],
+                            rows: overflowMatrixRows
+                        });
+                    });
+                }
+
+                // Page 7 - PSC Analysis
+                addBrandedPage('Deep Dive I - PSC Analysis', false);
+                drawSectionHeader('PSC Analysis: Forensic Audit & Conduct Risk', 'Extracted from the Forensic Audit panel in the live dashboard.');
+                drawSubHeader('Forensic Audit Summary', 8);
+                drawWrappedParagraph(pscData.summary);
+
+                drawSubHeader('What the Dashboard Does Well', 10);
+                const corePscStrengths = pscData.strengths.slice(0, 4);
+                const overflowPscStrengths = pscData.strengths.slice(4);
+                drawBulletedList(corePscStrengths, { styleKey: 'tableBody' });
+
+                drawSubHeader('Immediate Corrective Action Track', 10);
+                const corePscCorrective = pscData.corrective.slice(0, 4);
+                const overflowPscCorrective = pscData.corrective.slice(4);
+                drawBulletedList(corePscCorrective, { styleKey: 'tableBody' });
+
+                drawSubHeader('PSC Risk Register', 12);
+                const corePscRiskRows = pscData.riskRows.slice(0, 4);
+                const overflowPscRiskRows = pscData.riskRows.slice(4);
+                drawTableGrid({
+                    columns: [
+                        { key: 'issue', label: 'Issue', width: 0.25 },
+                        { key: 'why', label: 'Why It Matters', width: 0.45 },
+                        { key: 'likelihood', label: 'Likelihood', width: 0.15 },
+                        { key: 'impact', label: 'Impact', width: 0.15 }
+                    ],
+                    rows: corePscRiskRows
                 });
 
-                addBrandedPage('Deep Dive I - Legal Framework', false, 'deep-dive');
-                drawSectionHeader('Legal Framework & Charge Construction', 'Core doctrines, proof boundaries, and APRA-linked consequence framing.');
-                drawSubHeader('Core Doctrines and Proof Mapping', 10);
+                if (overflowPscStrengths.length || overflowPscCorrective.length || overflowPscRiskRows.length) {
+                    queueContinuation('Deep Dive I - PSC Analysis', 'PSC Analysis', () => {
+                        if (overflowPscStrengths.length) {
+                            drawSubHeader('What the Dashboard Does Well (Cont.)');
+                            drawBulletedList(overflowPscStrengths, { styleKey: 'tableBody' });
+                        }
+                        if (overflowPscCorrective.length) {
+                            drawSubHeader('Immediate Corrective Action Track (Cont.)');
+                            drawBulletedList(overflowPscCorrective, { styleKey: 'tableBody' });
+                        }
+                        if (overflowPscRiskRows.length) {
+                            drawSubHeader('PSC Risk Register (Cont.)');
+                            drawTableGrid({
+                                columns: [
+                                    { key: 'issue', label: 'Issue', width: 0.25 },
+                                    { key: 'why', label: 'Why It Matters', width: 0.45 },
+                                    { key: 'likelihood', label: 'Likelihood', width: 0.15 },
+                                    { key: 'impact', label: 'Impact', width: 0.15 }
+                                ],
+                                rows: overflowPscRiskRows
+                            });
+                        }
+                    });
+                }
+
+                // Page 8 - APRA Risk
+                addBrandedPage('Deep Dive II - APRA Regulatory Risk', false);
+                drawSectionHeader('Legal Framework & APRA Risk', 'Doctrine mapping plus APRA/CPS impact framing and diversion caveat.');
+                drawSubHeader('Core Defence Position', 10);
                 drawWrappedParagraph(CORE_DEFENCE_CONTEXT || fallbackLine);
-                legalData.doctrineCards.slice(0, 3).forEach((item) => {
+
+                const coreDoctrineCards = legalData.doctrineCards.slice(0, 3);
+                const overflowDoctrineCards = legalData.doctrineCards.slice(3);
+                drawSubHeader('Primary Authorities', 10);
+                coreDoctrineCards.forEach((item) => {
                     drawSubHeader(item.title, 6);
                     if (item.meta) drawWrappedParagraph(item.meta, { styleKey: 'tableBody' });
                     if (item.detail) drawWrappedParagraph(item.detail);
                     if (item.tactical) drawCallout(item.tactical, { tone: 'neutral', styleKey: 'tableBody' });
                 });
+
                 drawSubHeader('APRA Regulatory Risk', 6);
                 drawWrappedParagraph(legalData.apraRisk);
+                apraSectionRendered = Boolean(normalizeLine(legalData.apraRisk));
+
                 drawSubHeader('Diversion Eligibility Caveat', 8);
                 drawCallout(legalData.caveat, { tone: 'alert' });
 
-                addBrandedPage('Deep Dive II - Evidence Audit', false, 'deep-dive');
-                drawSectionHeader('Evidence Action Plan & Gap Closure', 'Evidence ingestion protocol and charge-specific audit controls.');
+                const coreGuardrails = legalData.guardrails.slice(0, 4);
+                const overflowGuardrails = legalData.guardrails.slice(4);
+                if (coreGuardrails.length) {
+                    drawSubHeader('Control Guardrails', 8);
+                    drawBulletedList(coreGuardrails, { styleKey: 'tableBody' });
+                }
+
+                if (overflowDoctrineCards.length || overflowGuardrails.length) {
+                    queueContinuation('Deep Dive II - APRA Regulatory Risk', 'APRA Risk', () => {
+                        overflowDoctrineCards.forEach((item) => {
+                            drawSubHeader(item.title, 6);
+                            if (item.meta) drawWrappedParagraph(item.meta, { styleKey: 'tableBody' });
+                            if (item.detail) drawWrappedParagraph(item.detail);
+                            if (item.tactical) drawCallout(item.tactical, { tone: 'neutral', styleKey: 'tableBody' });
+                        });
+                        if (overflowGuardrails.length) {
+                            drawSubHeader('Control Guardrails (Cont.)', 8);
+                            drawBulletedList(overflowGuardrails, { styleKey: 'tableBody' });
+                        }
+                    });
+                }
+
+                // Page 9 - Financial Audit
+                addBrandedPage('Deep Dive III - Financial Audit', false);
+                drawSectionHeader('Evidence Action Plan & Financial Audit', 'Evidence ingestion protocol and charge-specific audit controls.');
+                const coreProtocolRows = financialData.protocolRows.slice(0, 5);
+                const overflowProtocolRows = financialData.protocolRows.slice(5);
                 drawSubHeader('Evidence Ingestion Protocol', 18);
                 drawTableGrid({
                     columns: [
                         { key: 'step', label: 'Protocol Step', width: 0.28 },
                         { key: 'detail', label: 'Implementation Detail', width: 0.72 }
                     ],
-                    rows: financialData.protocolRows
+                    rows: coreProtocolRows
                 });
+
+                const coreChargeCards = financialData.chargeCards.slice(0, 2);
+                const overflowChargeCards = financialData.chargeCards.slice(2);
                 drawSubHeader('Charge-Specific Requirements', 16);
-                drawKpiCards(financialData.chargeCards.slice(0, 2), { columns: 2 });
+                drawKpiCards(coreChargeCards, { columns: 2 });
+
                 drawSubHeader('Financial and Conduct Context', 8);
                 drawWrappedParagraph(financialData.aggregateNote);
 
-                addBrandedPage('Deep Dive III - Court Plan', false, 'deep-dive');
-                drawSectionHeader('Court-Day Execution Checklist', 'Procedural staging for hearing readiness and negotiation control.');
+                if (overflowProtocolRows.length || overflowChargeCards.length) {
+                    queueContinuation('Deep Dive III - Financial Audit', 'Financial Audit', () => {
+                        if (overflowProtocolRows.length) {
+                            drawSubHeader('Evidence Ingestion Protocol (Cont.)', 8);
+                            drawTableGrid({
+                                columns: [
+                                    { key: 'step', label: 'Protocol Step', width: 0.28 },
+                                    { key: 'detail', label: 'Implementation Detail', width: 0.72 }
+                                ],
+                                rows: overflowProtocolRows
+                            });
+                        }
+                        if (overflowChargeCards.length) {
+                            drawSubHeader('Charge-Specific Requirements (Cont.)', 8);
+                            drawKpiCards(overflowChargeCards, { columns: 2 });
+                        }
+                    });
+                }
+
+                // Page 10 - Roadmap / Oral Submission
+                addBrandedPage('Roadmap / Oral Submission', false);
+                drawSectionHeader('Roadmap: Oral Submission Script', 'Live script extracted from the current dashboard state.');
+                drawSubHeader('Court-Day Execution Checklist', 14);
+                const coreRoadmapRows = courtData.roadmapRows.slice(0, 5);
+                const overflowRoadmapRows = courtData.roadmapRows.slice(5);
                 drawTableGrid({
                     columns: [
                         { key: 'stage', label: 'Stage', width: 0.31 },
                         { key: 'detail', label: 'Execution Detail', width: 0.69 }
                     ],
-                    rows: courtData.roadmapRows
+                    rows: coreRoadmapRows
                 });
+
                 drawSubHeader('Judicial Simulator Note', 8);
                 drawWrappedParagraph(courtData.judicialNote);
-                drawSubHeader('Corrective Action Track', 10);
-                drawBulletedList(legalData.guardrails.slice(0, 4));
 
-                addBrandedPage('Roadmap / Oral Submission', false, 'roadmap');
-                drawSectionHeader('Roadmap: Oral Submission Script', 'Live script extracted from the current dashboard state.');
+                const fullScriptLive = courtData.scriptLive || fallbackLine;
+                const scriptLines = splitTextExact(fullScriptLive, CONTENT_W - 4.2, 'callout');
+                const coreScriptLineCount = 30;
+                const coreScriptText = scriptLines.slice(0, coreScriptLineCount).join('\n') || fallbackLine;
+                const overflowScriptText = scriptLines.slice(coreScriptLineCount).join('\n');
+
                 drawSubHeader('Courtroom Submission Script', 20);
-                drawCallout(courtData.scriptLive, {
+                drawCallout(coreScriptText, {
                     tone: 'neutral',
                     preserveLineBreaks: true,
                     styleKey: 'callout'
                 });
+
                 drawSubHeader('Closing Control Points');
                 drawBulletedList([
                     'Maintain lawful compliance posture while preserving right-to-silence boundaries.',
@@ -4713,7 +4845,61 @@ You have access to the dashboard context. When answering:
                     'Present diversion first, with fallback minimisation and no-conviction pathway where legally open.'
                 ], { styleKey: 'tableBody' });
 
+                if (overflowRoadmapRows.length || overflowScriptText) {
+                    queueContinuation('Roadmap / Oral Submission', 'Roadmap / Oral Submission', () => {
+                        if (overflowRoadmapRows.length) {
+                            drawSubHeader('Court-Day Execution Checklist (Cont.)', 8);
+                            drawTableGrid({
+                                columns: [
+                                    { key: 'stage', label: 'Stage', width: 0.31 },
+                                    { key: 'detail', label: 'Execution Detail', width: 0.69 }
+                                ],
+                                rows: overflowRoadmapRows
+                            });
+                        }
+                        if (overflowScriptText) {
+                            drawSubHeader('Courtroom Submission Script (Cont.)', 10);
+                            drawCallout(overflowScriptText, {
+                                tone: 'neutral',
+                                preserveLineBreaks: true,
+                                styleKey: 'callout'
+                            });
+                        }
+                    });
+                }
+
+                continuationQueue.forEach((item) => {
+                    addBrandedPage(item.sectionName, true);
+                    drawSectionHeader(`${item.title} (Continuation)`, 'Overflow content appended after the core ten-page structure.');
+                    item.render();
+                });
+
+                // Quality gates
+                const currentLiveScript = normalizeMultiline(document.getElementById('courtScript')?.value || '');
+                if (currentLiveScript !== courtData.scriptLive) {
+                    throw new Error('Court script changed during export. Re-run export to capture the latest live text.');
+                }
+
+                if (!apraSectionRendered) {
+                    throw new Error('APRA Regulatory Risk section is missing or empty.');
+                }
+
+                const renderedTextModel = renderedCorpus.join('\n').toUpperCase();
+                ['PRIVILEGED', 'CONFIDENTIAL'].forEach((phrase) => {
+                    if (!renderedTextModel.includes(phrase)) {
+                        throw new Error(`Required legal marker missing: ${phrase}`);
+                    }
+                });
+
+                if (/\[REDACTED_PENDING\]/i.test(renderedTextModel) || /<REDACT_ME>/i.test(renderedTextModel)) {
+                    throw new Error('Unresolved redaction marker detected. Resolve markers before export.');
+                }
+
                 const totalPages = doc.getNumberOfPages();
+                if (totalPages < 10) {
+                    throw new Error(`Minimum page threshold failed: expected at least 10 pages, got ${totalPages}.`);
+                }
+
                 for (let pageNo = 1; pageNo <= totalPages; pageNo += 1) {
                     doc.setPage(pageNo);
                     const meta = pageMeta[pageNo - 1] || {

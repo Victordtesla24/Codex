@@ -1,0 +1,22 @@
+{
+  "timestamp_utc": "2026-02-12T06:49:07.280161Z",
+  "prompt_id": "pmpt_698d735c4eb48196ae12f6fe30d79f270136a2d693c7dbc5",
+  "env_file": "/Users/Shared/codex/legal-strategy-dashboard/.env.prompt-test",
+  "request": {
+    "prompt": {
+      "id": "pmpt_698d735c4eb48196ae12f6fe30d79f270136a2d693c7dbc5"
+    },
+    "input": "Generate a C-suite executive legal PDF brief structure with strict legal preflight PASS/FAIL checklist, citation placeholders, and delivery status."
+  },
+  "http_status": 404,
+  "response": {
+    "error": {
+      "message": "Prompt with id 'pmpt_698d735c4eb48196ae12f6fe30d79f270136a2d693c7dbc5' not found.",
+      "type": "invalid_request_error",
+      "param": null,
+      "code": null
+    }
+  },
+  "status": "FAILED",
+  "extracted_output_text": ""
+}

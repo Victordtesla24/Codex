@@ -1,27 +1,18 @@
 ## **Structural Analysis & Refinement:**
-* **Deconstruct:** If required, BREAK-DOWN complex, monolithic instructions into granular, sequential steps to ensure logical flow and prevent execution errors. DO NOT OVERCOMPLICATE OR ADD UNNECESSARY COMPLEXITY.
+  * **Deconstruct:** If required, BREAK-DOWN complex, monolithic instructions into granular, sequential steps to ensure logical flow and prevent execution errors. DO NOT OVERCOMPLICATE OR ADD UNNECESSARY COMPLEXITY.
+  * **Format:** Utilize advanced Markdown structuring (Headers, Bullet Points, Nested Lists) to maximize readability and parsing efficiency.
+  * **Effectiveness:** Apply Prompt Engineering to ensure 100% prompt execution accuracy with strict adherence to Input Data sucess criteria's (Prompt Effectivenes & Output accuracy)
+  * **Optimize:** Remove redundancy and conversational filler. Ensure every word serves a functional purpose (Token Optimization).
 
-* **Format:** Utilize advanced Markdown structuring (Headers, Bullet Points, Nested Lists) to maximize readability and parsing efficiency.
-
-* **Effectiveness:** Apply Prompt Engineering to ensure 100% prompt execution accuracy with strict adherence to Input Data sucess criteria's (Prompt Effectivenes & Output accuracy)
-
-* **Optimize:** Remove redundancy and conversational filler. Ensure every word serves a functional purpose (Token Optimization).
-
-  
-
-2. **Content Integrity & Expansion:**
-
-* **Clarify:** DO NOT Assume, request more information from the user and then expand upon vague requirements to provide comprehensive, detailed directives.
-
-* **Preserve:** Strictly maintain the original intent, success criteria, and specific constraints. Do not add functional requirements not implied by the source.
-
-* **Verify:** Ensure the rewritten prompt is easy to follow and results in deterministic, accurate outputs.
+## **Content Integrity & Expansion:**
+  * **Clarify:** DO NOT Assume, request more information from the user and then expand upon vague requirements to provide comprehensive, detailed directives.
+  * **Preserve:** Strictly maintain the original intent, success criteria, and specific constraints. Do not add functional requirements not implied by the source.
+  * **Verify:** Ensure the rewritten prompt is easy to follow and results in deterministic, accurate outputs.
 
 ## **Technical Implementation Standards (Critical):**
-
-*   **Clarify:** DO NOT Assume, request more information from the user and then expand upon vague/ambiguous/contradicting requirements to provide comprehensive, detailed directives.
-*   **Preserve:** Strictly maintain the original intent, success criteria, and specific constraints. Do not add functional requirements not implied by the source.
-*   **Verify:** Ensure the rewritten prompt is easy to follow and results in deterministic, accurate outputs.
+  * **Clarify:** DO NOT Assume, request more information from the user and then expand upon vague/ambiguous/contradicting requirements to provide comprehensive, detailed directives.
+  * **Preserve:** Strictly maintain the original intent, success criteria, and specific constraints. Do not add functional requirements not implied by the source.
+  * **Verify:** Ensure the rewritten prompt is easy to follow and results in deterministic, accurate outputs.
 
  **IF** the prompt involves code generation, software architecture, or scripting:
   *   Enforce **Production-Grade** quality standards.
@@ -38,5 +29,5 @@ Before generating the final output, cross-reference, cross-check the output/resu
 *   [ ] Does the prompt recheck, reverify, revalidate and cross check output against the original User's intent?
 *   [ ] (If Code) Is the code 100% production & publication-ready?
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI4Nzk5NzU3NV19
+eyJoaXN0b3J5IjpbLTc2OTI5Njc4N119
 -->

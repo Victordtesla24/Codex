@@ -10,10 +10,6 @@
   * **Verify:** Ensure the rewritten prompt is easy to follow and results in deterministic, accurate outputs.
 
 ## **Technical Implementation Standards (Critical):**
-  * **Clarify:** DO NOT Assume, request more information from the user and then expand upon vague/ambiguous/contradicting requirements to provide comprehensive, detailed directives.
-  * **Preserve:** Strictly maintain the original intent, success criteria, and specific constraints. Do not add functional requirements not implied by the source.
-  * **Verify:** Ensure the rewritten prompt is easy to follow and results in deterministic, accurate outputs.
-
  **IF** the prompt involves code generation, software architecture, or scripting:
   *   Enforce **Production-Grade** quality standards.
   *   **STRICTLY PROHIBIT** placeholders, pseudo-code, "todo" comments, or simulated logic.
@@ -21,7 +17,6 @@
 
 ## Strict Verification Checklist
 Before generating the final output, cross-reference, cross-check the output/result against the following:
-
 *   [ ] Is every single original user requirement, intent met fully & completely?
 *   [ ] Is the logic broken down into actionable steps within the prompt?
 *   [ ] Is the prompt effective, meets every success criteria, requirement and intent as of the User's original input?
@@ -29,5 +24,5 @@ Before generating the final output, cross-reference, cross-check the output/resu
 *   [ ] Does the prompt recheck, reverify, revalidate and cross check output against the original User's intent?
 *   [ ] (If Code) Is the code 100% production & publication-ready?
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc2OTI5Njc4N119
+eyJoaXN0b3J5IjpbLTIwODQ4NjIxOTBdfQ==
 -->

@@ -50,31 +50,6 @@ Engineer a defence + administrative recovery strategy that:
 -   **Doc-verified:** supported by an uploaded/Drive document cited here.
     
 -   **Accepted fact (per instruction):** informal intercepts after 18-Dec-2025 with no negted as true and not “evidence gaps”.
-    
-
-| Date | Event | Status | Evidence | Legal / admin significance |  
-Feb-2024 | Commenced role at NAB (contract / employment context) | Doc-verified | | Character / stability narrative (fit & pr Redundancy | Doc-verified | | Hardship narrative → mitigation; admin context |  
-| 18-Sep-2025 | Licence/registration “directions issued” (fines-related) | Secondary-doc referenced | | Trigger sequence for suspension mechanics |  
-| **25-Sep-2025** | **Police intercept (your prompt): Alcohol neg; Drug pos; chargesheet exists** | Not in current Must be inserted; needs chargesheet copy for exact charges/hearing |  
-| 20-Sep-2025 | Police stop (Burnley) — alcohol neg; drug pos; allegatipended | Doc-verified (in timeline sheet) | | Possible s30(1) issue + drug-driving allegations |  
-| 24-Sep-2025 | “Directions ended” (licence suspensio) | | Key to “status” defence; needs the underlying VicRoads letter scan |  
-| 03-Nov-2025 | Police stop (Oakleigh) — alcohol neg; drug pos; vehicle impounded 1 month | Doc-verified | xposure; impound consequences |  
-| **10-Dec-2025** | **Vehicle secured from impound (your prompt), fee $1000 paid** | Discrepant | (User instruction) vs sheet | Sheet records “car seizure cost = $999 paid 03-Dec” → resolve with receipt |  
-| 17-Dec-2025 | **Police intercept (your prompt): alcohol neg; drug neg; chargesheet exists; hearin sheet | (User instruction) | Must be inserted; crucial “clean test” anchor before later harassment/refusal narrative |  
-| 18-Dec-2025 full licence reinstated | Doc-verified (sheet) | | Establishes lawful driving baseline Dec-2025 | Breath + drug test negative | Doc-verified (sheet) | | “Pattern of compliance” evidence |  
-| 06-J alcohol neg; drug neg | **Accepted fact** | | Supports taroformal intercept — alcohol neg; drug neg | **Accepted fact** | | Same |  
-| 21-Jan-2026 | Court hearinuested | Doc-verified | | Adjournment mechanics; shows proactive compliance |  
-| 21-Jan-2026 | Police Prosecution Unit conference | Doc-verified (sheet) | | Negotiation touchpoint; document all offers/positions |  
-| **21-Jan-2026** | **t): alcohol neg; drug test refused due to harassment** | Missing from sheet | (User instruction) | Must be inserted; refusal-charge defence becomes central |  
-| 23-Feb-2026 | New hearing date set | Doc-verified | ith employment; affects adjournment strategy |  
-| 29-Jan-2026 | Citizenship certificate received (your prompt) | Discrepant | (User instruction) vsnship approved / received on 30-Jan” |  
-| **29-Jan-2026** | **PEIC application submitted (your prompt)** | Discrepant | (User instruction) vs sheet | Sheet records PEI2026 | Informal intercept — alcohol neg; drug neg | **Accepted fact** | (User instruction) | Must be inserted |  
-| 03-Feb-2026 | STV email: mandatory suspension notice | Doc-verified | | CPV suspension active; immediate response window |  
-| 09-Feb-2026 | Recorded intercept; vehicle confiscated ~rc-verified (part) + instruction | | New refusal exposure + “targeting” anchor |  
-| 09-Feb-2026 | PS0310) | Doc-verified | | Leverage: contemporaneous complaint record |  
-| 11-Feb-2an / payment arrangement | Doc-verified | | Mitigation + “reform conduct” evidence |  
-| 13-Feb-2026 | ATO call n-verified | | Critical for vetting narrative: “flag exists” but no police action outcome noted |  
-| 17-Feb-2026 | Employment start date | Doc-verified | | Time-critical: prevent offer withdrawal / deferral |
 
 ----------
 
@@ -868,5 +843,5 @@ I submit this complaint regarding police conduct and a repeated intercept patter
 
 ----------
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTEzMDE4MDI1NF19
+eyJoaXN0b3J5IjpbLTQ2MDg5ODIwNCwxMTMwMTgwMjU0XX0=
 -->

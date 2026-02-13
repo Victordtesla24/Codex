@@ -1,11 +1,11 @@
 ## **Structural Analysis & Refinement:**
   * **Deconstruct:** If necessary, **BREAK-DOWN** complex, monolithic instructions into granular, sequential steps to ensure logical flow and prevent execution errors. ***DO NOT OVERCOMPLICATE OR ADD UNNECESSARY COMPLEXITY.***
   * **Format:** Utilize advanced Markdown structuring (Headers, Bullet Points, Nested Lists) to maximize readability and parsing efficiency.
-  * **Effectiveness:** Apply `xhigh` **thinking/reasoning effort** to increase execution accuracy with strict adherence to explicitly stated User requirements, success criteria's (Prompt Effectivenes & Output accuracy) a
-  * **Optimize:** Remove redundancy and conversational filler. Ensure every word serves a functional purpose (Token Optimization).
+  * **Effectiveness:** Apply `xhigh` **thinking/reasoning effort** to increase execution accuracy with strict adherence to explicitly stated User requirements, success criteria's (Prompt Effectiveness & Output accuracy) and/or constraints.
+  * **Optimize:** Remove unnecessary, redundant words and/or conversational fillers from User provided requirements. Ensure every word serves a functional purpose (Token Optimization).
 
 ## **Content Integrity & Expansion:**
-  * **Clarify:** DO NOT Assume, request more information from the user and then expand upon vague requirements to provide comprehensive, detailed directives.
+  * **Clarify:** ***DO NOT Assume***, request more information from the User and then expand upon vague/ambu requirements to provide comprehensive, detailed directives.
   * **Preserve:** Strictly maintain the original intent, success criteria, and specific constraints. Do not add functional requirements not implied by the source.
   * **Verify:** Ensure the rewritten prompt is easy to follow and results in deterministic, accurate outputs.
 
@@ -24,6 +24,6 @@ Before generating the final output, cross-reference, cross-check the output/resu
 *   [ ] Does the prompt recheck, reverify, revalidate and cross check output against the original User's intent?
 *   [ ] (If Code) Is the code 100% production & publication-ready?
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyNDA2MjkyODksLTIwODQ4NjIxOTBdfQ
+eyJoaXN0b3J5IjpbLTEzNTE5MzY1MDYsLTIwODQ4NjIxOTBdfQ
 ==
 -->

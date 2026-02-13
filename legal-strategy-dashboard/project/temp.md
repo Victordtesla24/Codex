@@ -13,10 +13,10 @@
  **IF** the User prompt involves code generation, software architecture, or scripting:
   *   Enforce strict **Production-Grade** quality standards.
   *   ***STRICTLY PROHIBIT*** placeholders, pseudo-code, "todo" comments, or simulated logic.
-  *   Ensure all code is fully functional, secure, and ready for deployment.
+  *   Ensure all code is fully functional, effective, minimal, and ready for deployment free from complex code implementations.
 
 ## Strict Verification Checklist
-Before generating the final output, cross-reference, cross-check the output/result against the following:
+Before generating the final output to the User, cross-reference, cross-check it against the following:
 *   [ ] Is every single original user requirement, intent met fully & completely?
 *   [ ] Is the logic broken down into actionable steps within the prompt?
 *   [ ] Is the prompt effective, meets every success criteria, requirement and intent as of the User's original input?
@@ -24,6 +24,5 @@ Before generating the final output, cross-reference, cross-check the output/resu
 *   [ ] Does the prompt recheck, reverify, revalidate and cross check output against the original User's intent?
 *   [ ] (If Code) Is the code 100% production & publication-ready?
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExNzgzMzA3NzcsLTIwODQ4NjIxOTBdfQ
-==
+eyJoaXN0b3J5IjpbLTkwOTcyNzQxOCwtMjA4NDg2MjE5MF19
 -->

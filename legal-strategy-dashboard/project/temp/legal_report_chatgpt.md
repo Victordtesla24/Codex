@@ -10,7 +10,7 @@ Engineer a defence + administrative recovery strategy that:
     
 3.  Stabilises **ATO vetting** and employment risk with Australian Taxation Office and Accenture.
     
-4.  Creates immediate operational relief (income continuity, process control, evidencminating admissions.
+4.  Creates immediate operational relief (income continuity, process control, evidence minating admissions.
     
 
 ### Evidence processed (zero-omission for files present in this woacts)
@@ -868,5 +868,5 @@ I submit this complaint regarding police conduct and a repeated intercept patter
 
 ----------
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkxMDA3NzM3OV19
+eyJoaXN0b3J5IjpbMTEzMDE4MDI1NF19
 -->

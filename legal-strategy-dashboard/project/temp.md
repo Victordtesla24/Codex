@@ -7,12 +7,12 @@
 ## **Content Integrity & Expansion:**
   * **Clarify:** ***DO NOT Assume***, request more information from the User and then expand upon vague/ambiguous requirements/success criteria's to provide comprehensive, detailed directives.
   * **Preserve:** Strictly maintain the original User's intent, requirements, success criterias, and specific constraints. Do not add, remove or alter functional requirements not implied by the source/User.
-  * **Verify:** Ensure the everything  is easy to follow and results in deterministic, accurate outputs.
+  * **Verify:** Ensure the everything is easy to follow, deterministic, accurate, before execution and generating final output/result.
 
 ## **Technical Implementation Standards (Critical):**
- **IF** the prompt involves code generation, software architecture, or scripting:
-  *   Enforce **Production-Grade** quality standards.
-  *   **STRICTLY PROHIBIT** placeholders, pseudo-code, "todo" comments, or simulated logic.
+ **IF** the User prompt involves code generation, software architecture, or scripting:
+  *   Enforce strict **Production-Grade** quality standards.
+  *   ***STRICTLY PROHIBIT*** placeholders, pseudo-code, "todo" comments, or simulated logic.
   *   Ensure all code is fully functional, secure, and ready for deployment.
 
 ## Strict Verification Checklist
@@ -24,5 +24,6 @@ Before generating the final output, cross-reference, cross-check the output/resu
 *   [ ] Does the prompt recheck, reverify, revalidate and cross check output against the original User's intent?
 *   [ ] (If Code) Is the code 100% production & publication-ready?
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTI3OTYyMDI1MiwtMjA4NDg2MjE5MF19
+eyJoaXN0b3J5IjpbLTExNzgzMzA3NzcsLTIwODQ4NjIxOTBdfQ
+==
 -->

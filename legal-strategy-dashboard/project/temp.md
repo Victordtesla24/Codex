@@ -1,7 +1,7 @@
 ## **Structural Analysis & Refinement:**
   * **Deconstruct:** If necessary, **BREAK-DOWN** complex, monolithic instructions into granular, sequential steps to ensure logical flow and prevent execution errors. ***DO NOT OVERCOMPLICATE OR ADD UNNECESSARY COMPLEXITY.***
   * **Format:** Utilize advanced Markdown structuring (Headers, Bullet Points, Nested Lists) to maximize readability and parsing efficiency.
-  * **Effectiveness:** Apply Prompt Engineering to ensure 100% prompt execution accuracy with strict adherence to Input Data sucess criteria's (Prompt Effectivenes & Output accuracy)
+  * **Effectiveness:** Apply `xhigh` **thinking/reasoning effort** to increase execution accuracy with strict adherence to explicitly stated User requirements, success criteria's (Prompt Effectivenes & Output accuracy) a
   * **Optimize:** Remove redundancy and conversational filler. Ensure every word serves a functional purpose (Token Optimization).
 
 ## **Content Integrity & Expansion:**
@@ -24,6 +24,6 @@ Before generating the final output, cross-reference, cross-check the output/resu
 *   [ ] Does the prompt recheck, reverify, revalidate and cross check output against the original User's intent?
 *   [ ] (If Code) Is the code 100% production & publication-ready?
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1NDQ3MjU3MTAsLTIwODQ4NjIxOTBdfQ
+eyJoaXN0b3J5IjpbLTEyNDA2MjkyODksLTIwODQ4NjIxOTBdfQ
 ==
 -->
